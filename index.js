@@ -19,7 +19,7 @@ const server = http.createServer(app);
 app.use(
   cors({
     origin: "http://localhost:3000",
-    methods: ["GET", "POST", "PATCH"],
+    methods: ["GET", "POST", "PATCH", "delete"],
     credentials: true
   })
 );
@@ -33,7 +33,7 @@ app.use(express.json());
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PATCH"],
+    methods: ["GET", "POST", "PATCH", "delete"],
     credentials: true
   }
 });
