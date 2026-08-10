@@ -18,7 +18,7 @@ const server = http.createServer(app);
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://connect-client-green.vercel.app/",
     methods: ["GET", "POST", "PATCH", "DELETE"],
     credentials: true
   })
