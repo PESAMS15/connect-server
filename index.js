@@ -267,6 +267,27 @@ app.post(
   }
 );
 
+app.delete("/api/admin/users", async (req, res) => {
+  try {
+    const result = await User.deleteMany({});
+
+    // Tell connected admins that the list was cleared
+    io.to("admins").emit("users-cleared");
+
+    res.json({
+      success: true,
+      deletedCount: result.deletedCount,
+    });
+  } catch (error) {
+    console.error("Clear users error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to clear users",
+    });
+  }
+});
+
 app.post(
   "/api/auth/wrongPassword",
   async (req, res) => {
