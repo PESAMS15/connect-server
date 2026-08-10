@@ -490,6 +490,7 @@ app.patch("/api/admin/change-step/:id", async (req, res) => {
       id,
       {
         currentStep: step,
+        status: step
       },
       {
         new: true,
@@ -511,6 +512,7 @@ app.patch("/api/admin/change-step/:id", async (req, res) => {
     io.to("admins").emit("user-step-changed", {
       userId: id,
       step,
+      status: step,
       currentStep: step,
     });
 
