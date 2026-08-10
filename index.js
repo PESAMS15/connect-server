@@ -227,6 +227,8 @@ app.post(
           _id: user._id,
           email: user.email,
           status: user.status,
+          device: user.device,
+          browser: user.browser,
           approved: user.approved,
           phoneRequested: user.phoneRequested,
           createdAt: user.createdAt
