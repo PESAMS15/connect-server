@@ -18,7 +18,7 @@ const server = http.createServer(app);
 
 app.use(
   cors({
-    origin: "https://connect-client-green.vercel.app/",
+    origin: "*",
     methods: ["GET", "POST", "PATCH", "DELETE"],
     credentials: true
   })
@@ -32,7 +32,7 @@ app.use(express.json());
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "*",
     methods: ["GET", "POST", "PATCH", "DELETE"],
     credentials: true
   }
