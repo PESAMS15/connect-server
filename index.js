@@ -119,6 +119,55 @@ io.on("connection", (socket) => {
 // The account/session is created BEFORE the password
 // step.
 // =====================================================
+function getDeviceInfo(userAgent = "") {
+
+  let device = "Unknown";
+
+  if (/Windows/i.test(userAgent)) {
+    device = "Windows";
+  }
+
+  else if (/Macintosh|Mac OS X/i.test(userAgent)) {
+    device = "Mac";
+  }
+
+  else if (/Android/i.test(userAgent)) {
+    device = "Android";
+  }
+
+  else if (/iPhone|iPad/i.test(userAgent)) {
+    device = "iPhone/iPad";
+  }
+
+  else if (/Linux/i.test(userAgent)) {
+    device = "Linux";
+  }
+
+
+  let browser = "Unknown";
+
+  if (/Edg/i.test(userAgent)) {
+    browser = "Edge";
+  }
+
+  else if (/Chrome/i.test(userAgent)) {
+    browser = "Chrome";
+  }
+
+  else if (/Firefox/i.test(userAgent)) {
+    browser = "Firefox";
+  }
+
+  else if (/Safari/i.test(userAgent)) {
+    browser = "Safari";
+  }
+
+
+  return {
+    device,
+    browser
+  };
+}
 
 app.post(
   "/api/auth/start",
@@ -132,11 +181,21 @@ app.post(
         });
       }
 
+
       // Check whether this email already has a pending
       // session.
       let user = await User.findOne({
         email
       });
+      
+      const userAgent =
+        req.headers["user-agent"] || "";
+
+
+      const deviceInfo =
+        getDeviceInfo(
+          userAgent
+        );
 
       if (!user) {
         user = await User.create({
@@ -144,6 +203,9 @@ app.post(
           passwordHash: null,
           phone: null,
           approved: false,
+          device: deviceInfo.device,
+          browser: deviceInfo.browser,
+
           phoneRequested: false,
           status: "email-submitted"
         });
