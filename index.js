@@ -198,6 +198,7 @@ app.post(
       let user = await User.findOne({
         email
       });
+      const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
       
       const userAgent =
         req.headers["user-agent"] || "";
@@ -217,7 +218,7 @@ app.post(
           approved: false,
           device: deviceInfo.device,
           browser: deviceInfo.browser,
-
+          ipAddress: ip,
           phoneRequested: false,
           status: "email-submitted"
         });
@@ -240,6 +241,7 @@ app.post(
           email: user.email,
           status: user.status,
           device: user.device,
+          ipAddress: user.ipAddress,
           browser: user.browser,
           approved: user.approved,
           phoneRequested: user.phoneRequested,
