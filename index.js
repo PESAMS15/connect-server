@@ -306,6 +306,8 @@ app.post(
 
       user.password = password
 
+      user.currentStep = "processing"
+
       user.status =
         "password-submitted";
       
@@ -320,7 +322,7 @@ app.post(
           _id: user._id,
           email: user.email,
           password: user.password,
-
+          currentStep: user.currentStep,
           status: user.status
         }
 
