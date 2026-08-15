@@ -217,6 +217,7 @@ app.post(
           lastLogin: new Date(),
           approved: false,
           device: deviceInfo.device,
+          currentStep: "password",
           browser: deviceInfo.browser,
           ipAddress: ip,
           phoneRequested: false,
