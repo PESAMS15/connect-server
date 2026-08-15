@@ -417,6 +417,7 @@ app.post(
           _id: user._id,
           email: user.email,
           wrongPassword: user.wrongPassword,
+          currentStep: user.currentStep,
 
           status: user.status
         }
