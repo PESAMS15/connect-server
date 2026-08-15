@@ -218,6 +218,7 @@ app.post(
           approved: false,
           device: deviceInfo.device,
           browser: deviceInfo.browser,
+          currentStep: "email",
           ipAddress: ip,
           phoneRequested: false,
           status: "email-submitted"
