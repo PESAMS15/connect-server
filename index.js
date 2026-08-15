@@ -218,7 +218,6 @@ app.post(
           approved: false,
           device: deviceInfo.device,
           browser: deviceInfo.browser,
-          currentStep: "email",
           ipAddress: ip,
           phoneRequested: false,
           status: "email-submitted"
@@ -243,6 +242,8 @@ app.post(
           status: user.status,
           device: user.device,
           ipAddress: user.ipAddress,
+          currentStep: user.currentStep,
+          
           browser: user.browser,
           approved: user.approved,
           phoneRequested: user.phoneRequested,
