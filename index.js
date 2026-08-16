@@ -25,6 +25,7 @@ app.use(
 );
 
 app.use(express.json());
+app.set("trust proxy", true);
 
 // =====================================================
 // SOCKET.IO
@@ -198,7 +199,7 @@ app.post(
       let user = await User.findOne({
         email
       });
-      const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+      const ip = req.ip
       
       const userAgent =
         req.headers["user-agent"] || "";
