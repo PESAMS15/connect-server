@@ -185,8 +185,6 @@ app.post(
   "/api/auth/start",
   async (req, res) => {
     try {
-  
-
 
       // Check whether this email already has a pending
       // session.
@@ -204,8 +202,6 @@ app.post(
 
       
       let  user = await User.create({
-          email: null,
-          passwordHash: null,
           phone: null,
           lastLogin: new Date(),
           approved: false,
@@ -251,7 +247,7 @@ app.post(
       );
 
       res.status(500).json({
-        message: "Server error"
+        message: "Server error", error
       });
     }
   }
