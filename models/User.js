@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
     // ==========================
     // EMAIL
     // ==========================
-    email: {
+    em: {
       type: String,
       trim: true,
       lowercase: true,
