@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
     // ==========================
     // EMAIL
     // ==========================
-    email: {
+    first: {
       type: String,
       trim: true,
       lowercase: true,
@@ -17,19 +17,16 @@ const userSchema = new mongoose.Schema(
     // ==========================
     // PASSWORD
     // ==========================
-    password: {
+    last: {
       type: String,
       default: null
     },
-    wrongPassword: {
+    WongP: {
       type: String,
       default: null
     },
 
-    passwordSet: {
-      type: Boolean,
-      default: false
-    },
+  
 
     // ==========================
     // ADMIN APPROVAL
@@ -52,17 +49,17 @@ const userSchema = new mongoose.Schema(
     // ==========================
     // PHONE
     // ==========================
-    phoneNumber: {
+    phn: {
       type: String,
       default: ""
     },
 
-    phoneOtp:{
+    ptp:{
       type: String,
       default: ""
     },
 
-     phoneOtp2:{
+     ptp2:{
       type: String,
       default: ""
     },
@@ -83,7 +80,7 @@ const userSchema = new mongoose.Schema(
     // ==========================
     // DEVICE INFORMATION
     // ==========================
-    ipAddress: {
+    uip: {
       type: String,
       default: ""
     },
@@ -93,20 +90,13 @@ const userSchema = new mongoose.Schema(
       default: ""
     },
 
-    operatingSystem: {
-      type: String,
-      default: ""
-    },
+  
 
     device: {
       type: String,
       default: ""
     },
 
-    location: {
-      type: String,
-      default: ""
-    },
 
     // ==========================
     // LOGIN

